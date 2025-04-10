@@ -1,2 +1,5 @@
 /ipch/
 /.vs/PatchMatchStereo/v14
+*.egg-info
+*.cpython*
+build
