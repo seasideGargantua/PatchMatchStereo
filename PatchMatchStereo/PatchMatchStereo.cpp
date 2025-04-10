@@ -9,6 +9,7 @@
 #include <random>
 #include "pms_propagation.h"
 #include "pms_util.h"
+#include <stdio.h>
 
 PatchMatchStereo::PatchMatchStereo(): width_(0), height_(0), img_left_(nullptr), img_right_(nullptr),
                                       gray_left_(nullptr), gray_right_(nullptr),

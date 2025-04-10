@@ -4,6 +4,7 @@
 * Describe	: implement of pms_util
 */
 
+#include <stdio.h>
 #include "pms_util.h"
 #include <vector>
 #include <algorithm>

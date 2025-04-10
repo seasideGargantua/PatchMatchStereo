@@ -4,6 +4,7 @@
 * Describe	: implement of pms_propagation
 */
 
+#include <stdio.h>
 #include "pms_propagation.h"
 
 PMSPropagation::PMSPropagation(const sint32 width, const sint32 height, const uint8* img_left, const uint8* img_right,
