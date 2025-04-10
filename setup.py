@@ -16,7 +16,7 @@ class get_pybind_include(object):
 ext_modules = [
     Extension(
         'PatchMatchStereo',  # Module name
-        ['PatchMatchStereo/ext.cpp'],  # Source file
+        ['PatchMatchStereo/ext.cpp', 'PatchMatchStereo/PatchMatchStereo.cpp', 'PatchMatchStereo/pms_util.cpp', 'PatchMatchStereo/pms_propagation.cpp'],  # Source file
         include_dirs=[
             # Path to pybind11 headers
             get_pybind_include(),

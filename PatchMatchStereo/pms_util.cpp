@@ -4,7 +4,6 @@
 * Describe	: implement of pms_util
 */
 
-#include "stdafx.h"
 #include "pms_util.h"
 #include <vector>
 #include <algorithm>
@@ -21,7 +20,7 @@ void pms_util::MedianFilter(const float32* in, float32* out, const sint32& width
 	const sint32 radius = wnd_size / 2;
 	const sint32 size = wnd_size * wnd_size;
 
-	// ´æ´¢¾Ö²¿´°¿ÚÄÚµÄÊý¾Ý
+	// ï¿½æ´¢ï¿½Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½
 	std::vector<float32> wnd_data;
 	wnd_data.reserve(size);
 
@@ -29,7 +28,7 @@ void pms_util::MedianFilter(const float32* in, float32* out, const sint32& width
 		for (sint32 x = 0; x < width; x++) {
 			wnd_data.clear();
 
-			// »ñÈ¡¾Ö²¿´°¿ÚÊý¾Ý
+			// ï¿½ï¿½È¡ï¿½Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			for (sint32 r = -radius; r <= radius; r++) {
 				for (sint32 c = -radius; c <= radius; c++) {
 					const sint32 row = y + r;
@@ -40,11 +39,11 @@ void pms_util::MedianFilter(const float32* in, float32* out, const sint32& width
 				}
 			}
 
-			// ÅÅÐò
+			// ï¿½ï¿½ï¿½ï¿½
 			std::sort(wnd_data.begin(), wnd_data.end());
 
 			if (!wnd_data.empty()) {
-				// È¡ÖÐÖµ
+				// È¡ï¿½ï¿½Öµ
 				out[y * width + x] = wnd_data[wnd_data.size() / 2];
 			}
 		}
@@ -56,7 +55,7 @@ void pms_util::WeightedMedianFilter(const uint8* img_data, const sint32& width, 
 {
 	const sint32 wnd_size2 = wnd_size / 2;
 
-	// ´øÈ¨ÊÓ²î¼¯
+	// ï¿½ï¿½È¨ï¿½Ó²î¼¯
 	vector<pair<float32,float32>> disps;
 	disps.reserve(wnd_size * wnd_size);
 
@@ -78,19 +77,19 @@ void pms_util::WeightedMedianFilter(const uint8* img_data, const sint32& width, 
 				if(disp == Invalid_Float) {
 					continue;
 				}
-				// ¼ÆËãÈ¨Öµ
+				// ï¿½ï¿½ï¿½ï¿½È¨Öµ
 				const auto& col_q = GetColor(img_data, width, height, xc, yr);
 				const auto dc = abs(col_p.r - col_q.r) + abs(col_p.g - col_q.g) + abs(col_p.b - col_q.b);
 				const auto w = exp(-dc / gamma);
 				total_w += w;
 
-				// ´æ´¢´øÈ¨ÊÓ²î
+				// ï¿½æ´¢ï¿½ï¿½È¨ï¿½Ó²ï¿½
 				disps.emplace_back(disp, w);
 			}
 		}
 
-		// --- È¡¼ÓÈ¨ÖÐÖµ
-		// °´ÊÓ²îÖµÅÅÐò
+		// --- È¡ï¿½ï¿½È¨ï¿½ï¿½Öµ
+		// ï¿½ï¿½ï¿½Ó²ï¿½Öµï¿½ï¿½ï¿½ï¿½
 		std::sort(disps.begin(), disps.end());
 		const float32 median_w = total_w / 2;
 		float32 w = 0.0f;

@@ -4,7 +4,6 @@
 * Describe	: implement of pms_propagation
 */
 
-#include "stdafx.h"
 #include "pms_propagation.h"
 
 PMSPropagation::PMSPropagation(const sint32 width, const sint32 height, const uint8* img_left, const uint8* img_right,
@@ -21,7 +20,7 @@ PMSPropagation::PMSPropagation(const sint32 width, const sint32 height, const ui
 	  cost_left_(cost_left), cost_right_(cost_right),
 	  disparity_map_(disparity_map)
 {
-	// ´ú¼Û¼ÆËãÆ÷
+	// ï¿½ï¿½ï¿½Û¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	cost_cpt_left_ = new CostComputerPMS(img_left, img_right, grad_left, grad_right, width, height,
 	                                option.patch_size, option.min_disparity, option.max_disparity, option.gamma,
 	                                option.alpha, option.tau_col, option.tau_grad);
@@ -30,11 +29,11 @@ PMSPropagation::PMSPropagation(const sint32 width, const sint32 height, const ui
 									option.alpha, option.tau_col, option.tau_grad);
 	option_ = option;
 
-	// Ëæ»úÊýÉú³ÉÆ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	rand_disp_ = new std::uniform_real_distribution<float32>(-1.0f, 1.0f);
 	rand_norm_ = new std::uniform_real_distribution<float32>(-1.0f, 1.0f);
 
-	// ¼ÆËã³õÊ¼´ú¼ÛÊý¾Ý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ComputeCostData();
 }
 
@@ -65,23 +64,23 @@ void PMSPropagation::DoPropagation()
 		return;
 	}
 
-	// Å¼Êý´Îµü´ú´Ó×óÉÏµ½ÓÒÏÂ´«²¥
-	// ÆæÊý´Îµü´ú´ÓÓÒÏÂµ½×óÉÏ´«²¥
+	// Å¼ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½
 	const sint32 dir = (num_iter_%2==0) ? 1 : -1;
 	sint32 y = (dir == 1) ? 0 : height_ - 1;
 	for (sint32 i = 0; i < height_; i++) {
 		sint32 x = (dir == 1) ? 0 : width_ - 1;
 		for (sint32 j = 0; j < width_; j++) {
 
-			// ¿Õ¼ä´«²¥
+			// ï¿½Õ¼ä´«ï¿½ï¿½
 			SpatialPropagation(x, y, dir);
 
-			// Æ½ÃæÓÅ»¯
+			// Æ½ï¿½ï¿½ï¿½Å»ï¿½
 			if (!option_.is_fource_fpw) {
 				PlaneRefine(x, y);
 			}
 
-			// ÊÓÍ¼´«²¥
+			// ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
 			ViewPropagation(x, y);
 
 			x += dir;
@@ -109,18 +108,18 @@ void PMSPropagation::ComputeCostData() const
 void PMSPropagation::SpatialPropagation(const sint32& x, const sint32& y, const sint32& direction) const
 {
 	// ---
-	// ¿Õ¼ä´«²¥
+	// ï¿½Õ¼ä´«ï¿½ï¿½
 
-	// Å¼Êý´Îµü´ú´Ó×óÉÏµ½ÓÒÏÂ´«²¥
-	// ÆæÊý´Îµü´ú´ÓÓÒÏÂµ½×óÉÏ´«²¥
+	// Å¼ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½
 	const sint32 dir = direction;
 
-	// »ñÈ¡pµ±Ç°µÄÊÓ²îÆ½Ãæ²¢¼ÆËã´ú¼Û
+	// ï¿½ï¿½È¡pï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ó²ï¿½Æ½ï¿½æ²¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	auto& plane_p = plane_left_[y * width_ + x];
 	auto& cost_p = cost_left_[y * width_ + x];
 	auto* cost_cpt = dynamic_cast<CostComputerPMS*>(cost_cpt_left_);
 
-	// »ñÈ¡p×ó(ÓÒ)²àÏñËØµÄÊÓ²îÆ½Ãæ£¬¼ÆËã½«Æ½Ãæ·ÖÅä¸øpÊ±µÄ´ú¼Û£¬È¡½ÏÐ¡Öµ
+	// ï¿½ï¿½È¡pï¿½ï¿½(ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½Ó²ï¿½Æ½ï¿½æ£¬ï¿½ï¿½ï¿½ã½«Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pÊ±ï¿½Ä´ï¿½ï¿½Û£ï¿½È¡ï¿½ï¿½Ð¡Öµ
 	const sint32 xd = x - dir;
 	if (xd >= 0 && xd < width_) {
 		auto& plane = plane_left_[y * width_ + xd];
@@ -133,7 +132,7 @@ void PMSPropagation::SpatialPropagation(const sint32& x, const sint32& y, const 
 		}
 	}
 
-	// »ñÈ¡pÉÏ(ÏÂ)²àÏñËØµÄÊÓ²îÆ½Ãæ£¬¼ÆËã½«Æ½Ãæ·ÖÅä¸øpÊ±µÄ´ú¼Û£¬È¡½ÏÐ¡Öµ
+	// ï¿½ï¿½È¡pï¿½ï¿½(ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½Ó²ï¿½Æ½ï¿½æ£¬ï¿½ï¿½ï¿½ã½«Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pÊ±ï¿½Ä´ï¿½ï¿½Û£ï¿½È¡ï¿½ï¿½Ð¡Öµ
 	const sint32 yd = y - dir;
 	if (yd >= 0 && yd < height_) {
 		auto& plane = plane_left_[yd * width_ + x];
@@ -150,17 +149,17 @@ void PMSPropagation::SpatialPropagation(const sint32& x, const sint32& y, const 
 void PMSPropagation::ViewPropagation(const sint32& x, const sint32& y) const
 {
 	// --
-	// ÊÓÍ¼´«²¥
-	// ËÑË÷pÔÚÓÒÊÓÍ¼µÄÍ¬Ãûµãq£¬¸üÐÂqµÄÆ½Ãæ
+	// ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½qï¿½ï¿½Æ½ï¿½ï¿½
 
-	// ×óÊÓÍ¼Æ¥ÅäµãpµÄÎ»ÖÃ¼°ÆäÊÓ²îÆ½Ãæ 
+	// ï¿½ï¿½ï¿½ï¿½Í¼Æ¥ï¿½ï¿½ï¿½pï¿½ï¿½Î»ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½Ó²ï¿½Æ½ï¿½ï¿½ 
 	const sint32 p = y * width_ + x;
 	const auto& plane_p = plane_left_[p];
 	auto* cost_cpt = dynamic_cast<CostComputerPMS*>(cost_cpt_right_);
 
 	const float32 d_p = plane_p.to_disparity(x, y);
 
-	// ¼ÆËãÓÒÊÓÍ¼ÁÐºÅ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½Ðºï¿½
 	const sint32 xr = lround(x - d_p);
 	if (xr < 0 || xr >= width_) {
 		return;
@@ -170,7 +169,7 @@ void PMSPropagation::ViewPropagation(const sint32& x, const sint32& y) const
 	auto& plane_q = plane_right_[q];
 	auto& cost_q = cost_right_[q];
 
-	// ½«×óÊÓÍ¼µÄÊÓ²îÆ½Ãæ×ª»»µ½ÓÒÊÓÍ¼
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ó²ï¿½Æ½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 	const auto plane_p2q = plane_p.to_another_view(x, y);
 	const float32 d_q = plane_p2q.to_disparity(xr,y);
 	const auto cost = cost_cpt->ComputeA(xr, y, plane_p2q);
@@ -183,17 +182,17 @@ void PMSPropagation::ViewPropagation(const sint32& x, const sint32& y) const
 void PMSPropagation::PlaneRefine(const sint32& x, const sint32& y) const
 {
 	// --
-	// Æ½ÃæÓÅ»¯
+	// Æ½ï¿½ï¿½ï¿½Å»ï¿½
 	const auto max_disp = static_cast<float32>(option_.max_disparity);
 	const auto min_disp = static_cast<float32>(option_.min_disparity);
 
-	// Ëæ»úÊýÉú³ÉÆ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	const auto& rand_d = *rand_disp_;
 	const auto& rand_n= *rand_norm_;
 
-	// ÏñËØpµÄÆ½Ãæ¡¢´ú¼Û¡¢ÊÓ²î¡¢·¨Ïß
+	// ï¿½ï¿½ï¿½ï¿½pï¿½ï¿½Æ½ï¿½æ¡¢ï¿½ï¿½ï¿½Û¡ï¿½ï¿½Ó²î¡¢ï¿½ï¿½ï¿½ï¿½
 	auto& plane_p = plane_left_[y * width_ + x];
 	auto& cost_p = cost_left_[y * width_ + x];
 	auto* cost_cpt = dynamic_cast<CostComputerPMS*>(cost_cpt_left_);
@@ -205,16 +204,16 @@ void PMSPropagation::PlaneRefine(const sint32& x, const sint32& y) const
 	float32 norm_update = 1.0f;
 	const float32 stop_thres = 0.1f;
 
-	// µü´úÓÅ»¯
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½
 	while (disp_update > stop_thres) {
 
-		// ÔÚ -disp_update ~ disp_update ·¶Î§ÄÚËæ»úÒ»¸öÊÓ²îÔöÁ¿
+		// ï¿½ï¿½ -disp_update ~ disp_update ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½
 		float32 disp_rd = rand_d(gen) * disp_update;
 		if (option_.is_integer_disp) {
 			disp_rd = static_cast<float32>(round(disp_rd));
 		}
 
-		// ¼ÆËãÏñËØpÐÂµÄÊÓ²î
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½Âµï¿½ï¿½Ó²ï¿½
 		const float32 d_p_new = d_p + disp_rd;
 		if (d_p_new < min_disp || d_p_new > max_disp) {
 			disp_update /= 2;
@@ -222,7 +221,7 @@ void PMSPropagation::PlaneRefine(const sint32& x, const sint32& y) const
 			continue;
 		}
 
-		// ÔÚ -norm_update ~ norm_update ·¶Î§ÄÚËæ»úÈý¸öÖµ×÷Îª·¨ÏßÔöÁ¿µÄÈý¸ö·ÖÁ¿
+		// ï¿½ï¿½ -norm_update ~ norm_update ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		PVector3f norm_rd;
 		if (!option_.is_fource_fpw) {
 			norm_rd.x = rand_n(gen) * norm_update;
@@ -237,14 +236,14 @@ void PMSPropagation::PlaneRefine(const sint32& x, const sint32& y) const
 			norm_rd.x = 0.0f; norm_rd.y = 0.0f;	norm_rd.z = 0.0f;
 		}
 
-		// ¼ÆËãÏñËØpÐÂµÄ·¨Ïß
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½ÂµÄ·ï¿½ï¿½ï¿½
 		auto norm_p_new = norm_p + norm_rd;
 		norm_p_new.normalize();
 
-		// ¼ÆËãÐÂµÄÊÓ²îÆ½Ãæ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½Ó²ï¿½Æ½ï¿½ï¿½
 		auto plane_new = DisparityPlane(x, y, norm_p_new, d_p_new);
 
-		// ±È½ÏCost
+		// ï¿½È½ï¿½Cost
 		if (plane_new != plane_p) {
 			const float32 cost = cost_cpt->ComputeA(x, y, plane_new);
 
